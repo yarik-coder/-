@@ -5,19 +5,19 @@ import numpy as np
 import os
 from PIL import Image, ImageChops
 
-face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml') #подключаем фильтры
 
 def cutter(img):
-    face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-    img = cv2.imread(res)
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+    face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml') #подключаем фильтры
+    img = cv2.imread(res) #читаем картинку из фото
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #переводим в чб
+    faces = face_cascade.detectMultiScale(gray, 1.3, 5) #ищем схожести
     for (x, y, w, h) in faces: #находим лицо
         cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2) #обводим лицо
-        im = Image.open(res)
+        im = Image.open(res) #открываем картинку
         im_crop = im.crop((x, y, x + w, y + h)) #обрезаем лицо
         im_crop.save('pon.png', quality=95) #сохраняем
-        cv2.imshow('img', img)
+        cv2.imshow('img', img) #показываем результат
 class Cam:
     def __init__(self, master=None):
         self.cap = cv2.VideoCapture(0) #подключчаемся к камере
@@ -33,12 +33,12 @@ class Cam:
     def photo(self):
         ret, img = self.cap.read()
         global res
-        res = format(txt.get())
-        res = "photo/" + res + ".png"
+        res = format(txt.get()) #получаем название с текстового поля
+        res = "photo/" + res + ".png" #сохраняем в паку с всеми фотками
         if ret:
-            frame = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+            frame = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) #создаём RGB
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) #создаём серый
+            faces = face_cascade.detectMultiScale(gray, 1.3, 5) #ищем схожести с фильтром
             for (x, y, w, h) in faces: #находим лица
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (250, 0, 0), 2)
                 im = Image.fromarray(frame)
@@ -47,19 +47,18 @@ class Cam:
     def update(self):
         ret, frame = self.cap.read()
         if ret:
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) #Сохранение картинки
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) #серый
-            faces = face_cascade.detectMultiScale(gray, 1.3, 5) #ищем лица по наст а не по цыклу
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) #создаём RGB
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) #создаём серый
+            faces = face_cascade.detectMultiScale(gray, 1.3, 5) #ищем схожести
             for (x, y, w, h) in faces:
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2) #Создается прямоугольник
             self.photo = ImageTk.PhotoImage(image=Image.fromarray(frame))
-            self.canvas.create_image(0, 0, image=self.photo, anchor=NW)
+            self.canvas.create_image(0, 0, image=self.photo, anchor=NW) #помещаем в канвас изображение с камеры
             self.master.after(self.delay, self.update)
         else:
             self.cap.release()
 
 
-# noinspection PyTypeChecker
 def procent(Cam):
     global im_crop, b
     face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
@@ -70,10 +69,10 @@ def procent(Cam):
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         faces = face_cascade.detectMultiScale(gray, 1.3, 5)
         for (x, y, w, h) in faces:  # находим лица
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (250, 0, 0), 2)
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (250, 0, 0), 2) #рамка
             im = Image.fromarray(frame)
             im_crop = im.crop((x, y, x + w, y + h))  # обрезаем
-        photo = os.listdir("photo")
+        photo = os.listdir("photo") #получаем все имена из папки с фотками
         print(photo)
         b = 0
         x = 0
